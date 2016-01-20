@@ -21,7 +21,7 @@
     </listen-socket>
     <mount>
         <mount-name>/auth_example.ogg</mount-name>
-        <authentication type="url">
+        <authentication type="url" max-pending="100">
             <option name="mount_add"       value="http://myauthserver.net/action.php"/>
             <option name="mount_remove"    value="http://myauthserver.net/action.php"/>
             <option name="listener_add"    value="http://myauthserver.net/action.php"/>
