@@ -542,7 +542,7 @@ void auth_add_listener (const char *mount, client_t *client)
     {
         auth_client *auth_user;
 
-        if (mountinfo->auth->pending_count > 100)
+        if (mountinfo->auth->pending_count >= mountinfo->auth->max_pending)
         {
             config_release_config ();
             ICECAST_LOG_WARN("too many clients awaiting authentication");
@@ -639,6 +639,7 @@ auth_t *auth_get_authenticator (xmlNodePtr node)
     auth_t *auth = calloc (1, sizeof (auth_t));
     config_options_t *options = NULL, **next_option = &options;
     xmlNodePtr option;
+    char *tmp;
 
     if (auth == NULL)
         return NULL;
@@ -671,6 +672,15 @@ auth_t *auth_get_authenticator (xmlNodePtr node)
             if (xmlStrcmp (current->name, XMLSTR("text")) != 0)
                 ICECAST_LOG_WARN("unknown auth setting (%s)", current->name);
     }
+
+    tmp = (char*)xmlGetProp (node, XMLSTR("max-pending"));
+    if (tmp) {
+        auth->max_pending = atoi (tmp);
+        xmlFree(tmp);
+    } else {
+        auth->max_pending = 100;
+    }
+
     auth->type = (char*)xmlGetProp (node, XMLSTR("type"));
     if (get_authenticator (auth, options) < 0)
     {

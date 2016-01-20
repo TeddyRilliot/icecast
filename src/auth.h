@@ -81,6 +81,7 @@ typedef struct auth_tag
     /* per-auth queue for clients */
     auth_client *head, **tailp;
     int pending_count;
+    int max_pending;
 
     void *state;
     char *type;
