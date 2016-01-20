@@ -541,11 +541,12 @@ void auth_add_listener (const char *mount, client_t *client)
     if (mountinfo && mountinfo->auth)
     {
         auth_client *auth_user;
+        auth_t *auth = mountinfo->auth;
 
-        if (mountinfo->auth->pending_count >= mountinfo->auth->max_pending)
+        if (auth->max_pending < auth->pending_count)
         {
             config_release_config ();
-            ICECAST_LOG_WARN("too many clients awaiting authentication");
+            ICECAST_LOG_WARN("too many clients awaiting authentication (max %d)", auth->max_pending);
             client_send_403 (client, "busy, please try again later");
             return;
         }
